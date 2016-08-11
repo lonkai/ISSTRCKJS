@@ -68,7 +68,7 @@ class SettingsCtrl {
         };
 
     };
-};
+}
 
 SettingsCtrl.$inject = ['$scope', '$uibModalInstance', '$log', 'colorScheme', 'status', 'scheme'];
-export {SettingsCtrl}
+export default SettingsCtrl;

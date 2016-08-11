@@ -8,7 +8,7 @@ import {IssueTrackerCtrl} from './controllers/issue-tracker.controller.js';
 import {ModalAddCtrl} from './controllers/modal-add.controller';
 import {ModalEditCtrl} from './controllers/modal-edit.controller';
 import {CommentAddCtrl} from './controllers/modal-comment-add.controller';
-import {SettingsCtrl} from './controllers/modal-settings.controller.js';
+import SettingsCtrl from './controllers/modal-settings.controller.js';
 import {HelpCtrl} from './controllers/modal-help.controller.js';
 import {DialogCtrl} from './controllers/modal-dialog.controller.js';
 import {issueAddService} from './services/issues-add.service.js';
@@ -17,6 +17,8 @@ import {commentAddService} from './services/comments-add.service.js';
 import {settingsService} from './services/settings.service.js';
 import {helpService} from './services/help.service.js';
 import {dialogService} from './services/dialog.service.js';
+import {requestService} from './services/request.service.js';
+import {dataService} from './services/data.service.js';
 import {navMenu} from './directives/nav-menu.directive.js';
 
 //CONTROLLERS
@@ -34,6 +36,9 @@ angular.module('issueTrackerApp').service('commentAddService', commentAddService
 angular.module('issueTrackerApp').service('settingsService', settingsService);
 angular.module('issueTrackerApp').service('helpService', helpService);
 angular.module('issueTrackerApp').service('dialogService', dialogService);
+angular.module('issueTrackerApp').service('requestService', requestService);
+angular.module('issueTrackerApp').service('dataService', dataService);
+
 //DIRECTIVES
 angular.module('issueTrackerApp').directive('navMenu', () => new navMenu);
 

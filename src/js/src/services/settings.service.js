@@ -1,34 +1,31 @@
 class settingsService {
 
-    constructor($uibModal, $log) {
+    constructor($uibModal) {
         
-        var modalWindow = {};
-
-        modalWindow.create = function (colorScheme, status, scheme) {
-            return $uibModal.open({
-                animation: true,
-                templateUrl: 'templates/modal-settings.htm',
-                controller: 'SettingsCtrl',
-                controllerAs: 'ModalCtrl',
-                resolve: {
-                    colorScheme: function () {
-                        return colorScheme;
-                    },
-                    status: function () {
-                        return status;
-                    },
-                    scheme: function () {
-                        return scheme;
-                    }
-
+        this.$uibModal = $uibModal;
+    }
+    
+    getModal(colorScheme, status, scheme) {
+        return this.$uibModal.open({
+            animation: true,
+            templateUrl: 'templates/modal-settings.htm',
+            controller: 'SettingsCtrl',
+            controllerAs: 'ModalCtrl',
+            resolve: {
+                colorScheme: function () {
+                    return colorScheme;
                 },
-                backdrop: 'static'
-            });
+                status: function () {
+                    return status;
+                },
+                scheme: function () {
+                    return scheme;
+                }
 
-        };
-
-        return modalWindow;
+            },
+            backdrop: 'static'
+        });        
     }
 }
-settingsService.$inject = ['$uibModal', '$log'];
+settingsService.$inject = ['$uibModal'];
 export {settingsService}

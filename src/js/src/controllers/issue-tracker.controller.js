@@ -1,266 +1,245 @@
 class IssueTrackerCtrl {
 
-    constructor($scope, $window, $rootScope, $uibModal, $log, $http, $q, settingsService, helpService, dialogService, issueEditService, issueAddService, commentAddService) {
-        var vm = this;
+    constructor($scope, $uibModal, $http, settingsService, helpService, dialogService,
+                issueEditService, issueAddService, commentAddService, requestService,
+                dataService) {
 
-        vm.searchQuery = '';
-        vm.log = true;
+        self = this;
+        this.scope = $scope;
+        this.requestService = requestService;
+        this.dataService = dataService;
 
-        $http.get('./json/issues.json')
-            .then(function (response) {
-                vm.issueList = response.data;
-                vm.initIssue = vm.copyIssue();
-            });
-
-        $http.get('./json/comments.json')
-            .then(function (response) {
-                vm.comments = response.data;
-            });
-
-        $http.get("./json/poll.json")
-            .then(function (response) {
-                vm.poll = response.data;
-            });
-
-        vm.copyIssue = function () {
-            return angular.copy(vm.issueList)
+        self.scope.copyIssue = function () {
+            return angular.copy(self.scope.issueList)
         };
 
-        vm.sendIssueData = function () {
+        self.scope.sendIssueData = function () {
 
-            $http.post("./issues", vm.issueList).then(function (response) {
-            });
+            requestService.postData('./issues', self.scope.issueList);
         };
 
-        vm.sendCommentData = function () {
+        self.scope.sendCommentData = function () {
 
-            $http.post("./comments", vm.comments).then(function (response) {
-            });
+            requestService.postData('./comments', self.scope.comments);
         };
 
-        vm.priorities = [{id: 1, name: 'low'},
-            {id: 2, name: 'medium'},
-            {id: 3, name: 'high'}];
+        self.scope.remain = function () {
+            let count = 0;
 
-        vm.stasuses = [{id: 1, name: 'new'},
-            {id: 2, name: 'assigned'},
-            {id: 3, name: 'closed'}];
+            angular.forEach(self.scope.issueList, function (issue) {
 
-        vm.colorScheme = [{name: 'first'},
-            {name: 'second'},
-            {name: 'third'}];
+                if (issue.status.id !== 3) {
+                    count += 1
+                }
 
-        vm.scheme = 'first';
-
-        vm.remain = function () {
-            var count = 0;
-
-            angular.forEach(vm.issueList, function (issue) {
-
-                (issue.status.id == 3) ? '' : count += 1;
             });
-            return count;
+            return count
         };
 
-        vm.getId = function () {
+        self.scope.getId = function () {
             var max = 0;
 
-            angular.forEach(vm.issueList, function (issue) {
+            angular.forEach(self.scope.issueList, function (issue) {
 
-                (max >= issue.id) ? '' : max = issue.id;
+                if (max <= issue.id) {
+                    max = issue.id
+                }
             });
-            return ++max;
+            return max + 1;
         };
 
-        vm.getCommentId = function () {
+        self.scope.getCommentId = function () {
             var max = 0;
 
-            angular.forEach(vm.comments, function (comment) {
+            angular.forEach(self.scope.comments, function (comment) {
 
-                (max >= comment.id) ? '' : max = comment.id;
+                if (max <= comment.id) {
+                    max = comment.id
+                }
             });
-            return ++max;
+            return max + 1;
         };
 
-        vm.setClass = function (status) {
+        self.scope.setClass = function (status) {
 
             switch (status.id) {
                 case 1:
-                    switch (vm.scheme) {
+                    switch (self.scope.scheme) {
                         case "first":
                             return "danger";
-                            break;
                         case "second":
                             return "info";
-                            break;
                         default:
-                            return "success";
-                            break;
+                            return "success"
                     }
-                    break;
-
                 case 2:
-                    switch (vm.scheme) {
+                    switch (self.scope.scheme) {
                         case "first":
                             return "info";
-                            break;
                         case "second":
                             return "success";
-                            break;
                         default:
-                            return "danger";
-                            break;
+                            return "danger"
                     }
-                    break;
-
                 case 3:
-                    switch (vm.scheme) {
+                    switch (self.scope.scheme) {
                         case "first":
                             return "success";
-                            break;
                         case "second":
                             return "danger";
-                            break;
                         default:
-                            return "info";
-                            break;
+                            return "info"
                     }
-                    break;
-
                 default:
-                    return "";
-                    break;
-
+                    return ""
             }
         };
 
-        vm.addComment = function (issue_id) {
+        self.scope.addComment = function (issue_id) {
 
-            var modalInstance = commentAddService.create(vm.getCommentId(), issue_id);
+            let modalInstance = commentAddService.getModal(self.scope.getCommentId(), issue_id)
             modalInstance.result.then(function (comments) {
 
                 if (comments !== null) {
-                    vm.comments.push(comments);
-                    vm.sendCommentData();
+                    self.scope.comments.push(comments);
+                    self.scope.sendCommentData()
                 }
-            });
+            })
         };
 
-        vm.deleteComment = function (id) {
+        self.scope.deleteComment = function (id) {
 
-            angular.forEach(vm.comments, function (value, index) {
+            angular.forEach(self.scope.comments, function (value, index) {
                 if (value.id == id) {
-                    var modalInstance = dialogService.create('d');
 
-                    modalInstance.result.then(function (result) {
-
+                    dialogService.getModal('d').result.then(function (result) {
                         if (result !== null) {
-                            vm.comments.splice(index, 1);
-                            vm.sendCommentData();
+                            self.scope.comments.splice(index, 1);
+                            self.scope.sendCommentData()
                         }
-                    });
+                    })
                 }
-            });
+            })
         };
 
-        vm.addIssue = function () {
-            var modalInstance = issueAddService.create(vm.getId(), vm.priorities, vm.stasuses);
+        self.scope.addIssue = function () {
+            let modalInstance = issueAddService.create(this.getId(), self.scope.priorities, self.scope.statuses);
 
             modalInstance.result.then(function (issueList) {
 
                 if (issueList !== null) {
-                    vm.issueList.push(issueList);
-                    vm.initIssue = vm.copyIssue();
-                    vm.sendIssueData();
+                    self.scope.issueList.push(issueList);
+                    self.scope.initIssue = self.scope.copyIssue();
+                    self.scope.sendIssueData();
                 }
-            });
+            })
         };
 
-        vm.editIssue = function (issue, index) {
-            var modalInstance = issueEditService.create(issue, vm.priorities, vm.stasuses, index);
+        self.scope.editIssue = function (issue, index) {
+            let modalInstance = issueEditService.create(issue, self.scope.priorities, self.scope.statuses, index);
 
             modalInstance.result.then(function (issueList) {
 
                 if (issueList !== null) {
                     _.extend(issue, issueList);
-                    vm.initIssue = vm.copyIssue();
-                    vm.sendIssueData();
+                    self.scope.initIssue = this.copyIssue();
+                    self.scope.sendIssueData()
                 } else {
-                    var modalInstance = dialogService.create('d');
+                    let modalInstance = dialogService.create('d');
 
                     modalInstance.result.then(function (result) {
 
                         if (result !== null) {
-                            vm.issueList.splice(index, 1);
-                            vm.sendIssueData();
+                            self.scope.issueList.splice(index, 1);
+                            self.scope.sendIssueData();
                         }
-                    });
+                    })
                 }
-                vm.sendIssueData();
-            });
+                self.scope.sendIssueData()
+            })
         };
 
-        vm.deleteIssue = function (index) {
+        self.scope.deleteIssue = function (index) {
 
-            var modalInstance = dialogService.create('d');
+            dialogService.getModal('d').result.then(function (result) {
+                if (result !== null) {
+                    self.scope.issueList.splice(index, 1);
+                    self.scope.sendIssueData()
+                }
+            })
+        };
 
-            modalInstance.result.then(function (result) {
+        self.scope.closeAlert = function (index) {
+            this.alerts.splice(index, 1)
+        };
+
+        self.scope.dialog = function (issue, index) {
+
+            self.scope.updIssueList[index] = self.scope.issueList[index];
+            self.scope.issueList[index] = self.scope.initIssue[index];
+
+            dialogService.getModal('c').result.then(function (result) {
 
                 if (result !== null) {
-                    vm.issueList.splice(index, 1);
-                    vm.sendIssueData();
-                }
-            });
-        };
-
-        vm.help = function () {
-            var modalInstance = helpService.create(vm.poll, vm.count, vm.log);
-
-            modalInstance.result.then(function (count) {
-                if (count !== null) {
-                    vm.count = count;
-                    vm.sendPoll();
-                }
-            });
-        };
-
-        vm.settings = function () {
-            var modalInstance = settingsService.create(vm.colorScheme, vm.stasuses, vm.scheme);
-
-            modalInstance.result.then(function (scheme) {
-                if (scheme !== null) {
-                    vm.scheme = scheme;
-                }
-            });
-        };
-
-        vm.addAlert = function () {
-            vm.alerts.push({msg: 'Rate my app!'});
-        };
-
-        vm.closeAlert = function (index) {
-            vm.alerts.splice(index, 1);
-        };
-
-        vm.dialog = function (issue, index) {
-
-            var modalInstance = dialogService.create('c');
-
-            modalInstance.result.then(function (result) {
-
-                if (result !== null) {
-                    vm.issueList[index] = vm.initIssue[index];
-                    vm.sendIssueData();
+                    self.scope.issueList[index] = self.scope.updIssueList[index];
+                    self.scope.sendIssueData();
                 }
                 else if (result == null) {
-                    vm.initIssue = vm.copyIssue();
+                    self.scope.issueList = self.scope.copyIssue()
                 }
 
             });
         };
+
+        self.scope.help = function () {
+            helpService.getModal(self.scope.poll, self.scope.count, self.scope.log).result.then(function (count) {
+                if (count !== null) {
+                    self.scope.count = count;
+                    self.scope.sendPoll();
+                }
+            })
+        };
+
+        self.scope.settings = function () {
+            settingsService.getModal(self.scope.colorScheme, self.scope.statuses, self.scope.scheme).result.then(function (scheme) {
+                if (scheme !== null) {
+                    self.scope.scheme = scheme;
+            }
+            });
+        };
+
+        this.initData();
+    }
+
+    initData() {
+        let self = this;
+
+        self.scope.sortType     = 'id';
+        self.scope.sortReverse  = false;
+        self.scope.searchQuery = '';
+        self.scope.log = true;
+        self.scope.updIssueList = {};
+        self.scope.scheme = 'first';
+
+        this.requestService.getData('./json/issues.json').then(function (result) {
+            self.scope.issueList = result;
+            self.scope.initIssue = self.scope.copyIssue();
+            //self.scope.$apply();
+        });
+        this.requestService.getData('./json/comments.json').then(function (result) {
+            self.scope.comments = result;
+        });
+        this.requestService.getData('./json/poll.json').then(function (result) {
+            self.scope.poll = result;
+        });
+
+        self.scope.statuses = this.dataService.getStatus();
+        self.scope.priorities = this.dataService.getPriority();
+        self.scope.colorScheme = this.dataService.getScheme();
 
     }
 }
 
-IssueTrackerCtrl.$inject = ['$scope', '$window', '$rootScope', '$uibModal', '$log', '$http', '$q', 'settingsService', 'helpService', 'dialogService', 'issueEditService', 'issueAddService', 'commentAddService'];
+IssueTrackerCtrl.$inject = ['$scope', '$uibModal', '$http', 'settingsService', 'helpService', 'dialogService',
+    'issueEditService', 'issueAddService', 'commentAddService', 'requestService', 'dataService'];
 export {IssueTrackerCtrl}

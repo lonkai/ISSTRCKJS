@@ -1,9 +1,6 @@
 class navMenu {
     constructor() {
-        return {
-            templateUrl: 'templates/nav-menu.html'
-        };
+        this.templateUrl = 'templates/nav-menu.html';
     }
 }
-
-export {navMenu};
+export {navMenu}

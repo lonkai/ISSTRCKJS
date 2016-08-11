@@ -1,31 +1,28 @@
 class commentAddService {
 
-    constructor($uibModal, $log) {
+    constructor($uibModal) {
 
-        var modalWindow = {};
-
-        modalWindow.create = function (comment_id, id) {
-            return $uibModal.open({
-                animation: true,
-                templateUrl: 'templates/modal-comment.htm',
-                controller: 'CommentAddCtrl',
-                controllerAs: 'ModalCtrl',
-                resolve: {
-                    comment_id: function () {
-                        return comment_id
-                    },
-                    id: function () {
-                        return id;
-                    }
-                },
-                backdrop: 'static'
-            });
-
-        };
-
-        return modalWindow;
+        this.$uibModal = $uibModal;
     }
+
+    getModal(comment_id, id) {
+        return this.$uibModal.open({
+            animation: true,
+            templateUrl: 'templates/modal-comment.htm',
+            controller: 'CommentAddCtrl',
+            controllerAs: 'ModalCtrl',
+            resolve: {
+                comment_id: function () {
+                    return comment_id
+                },
+                id: function () {
+                    return id;
+                }
+            },
+            backdrop: 'static'
+        });
+    };
 }
 
-commentAddService.$inject = ['$uibModal', '$log'];
+commentAddService.$inject = ['$uibModal'];
 export {commentAddService}

@@ -1,33 +1,30 @@
 class helpService {
 
-    constructor($uibModal, $log) {
+    constructor($uibModal) {
 
-        var modalWindow = {};
-
-        modalWindow.create = function (poll, count, log) {
-            return $uibModal.open({
-                animation: true,
-                templateUrl: 'templates/modal-help.htm',
-                controller: 'HelpCtrl',
-                controllerAs: 'ModalCtrl',
-                resolve: {
-                    poll: function () {
-                        return poll;
-                    },
-                    count: function () {
-                        return count;
-                    },
-                    log: function () {
-                        return log;
-                    }
-                }
-            });
-
-        };
-
-        return modalWindow;
+        this.$uibModal = $uibModal;
     }
+
+    getModal(poll, count, log) {
+        return this.$uibModal.open({
+            animation: true,
+            templateUrl: 'templates/modal-help.htm',
+            controller: 'HelpCtrl',
+            controllerAs: 'ModalCtrl',
+            resolve: {
+                poll: function () {
+                    return poll;
+                },
+                count: function () {
+                    return count;
+                },
+                log: function () {
+                    return log;
+                }
+            }
+        });
+    };
 }
 
-helpService.$inject = ['$uibModal', '$log'];
+helpService.$inject = ['$uibModal'];
 export {helpService}

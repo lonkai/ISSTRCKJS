@@ -1,1 +1,1 @@
-import issueTrackerApp from './src/modules.js';
+import './src/modules.js';

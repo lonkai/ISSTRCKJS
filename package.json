@@ -7,9 +7,7 @@
     "body-parser": "^1.15.2",
     "cookie-parser": "^1.4.3",
     "gulp": "^3.9.1",
-    "q": "^1.4.1"
-  },
-  "devDependencies": {
+    "q": "^1.4.1",
     "angular-ui-bootstrap": "^2.0.0",
     "babelify": "^6.1.3",
     "browserify": "^10.2.6",
@@ -30,9 +28,11 @@
     "nib": "^1.1.0",
     "opn": "^3.0.2",
     "require-dir": "^0.3.0",
-    "run-sequence": "^1.1.1",
+    "run-sequence": "^1.1.1"
+  },
+  "devDependencies": {
+
     "tiny-lr": "^0.1.6",
-    "underscore": "^1.8.3",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.2.3"

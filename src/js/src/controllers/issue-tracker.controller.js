@@ -1,245 +1,251 @@
 class IssueTrackerCtrl {
 
-    constructor($scope, $uibModal, $http, settingsService, helpService, dialogService,
-                issueEditService, issueAddService, commentAddService, requestService,
-                dataService) {
+    constructor(modalService, requestService, dataService) {
 
-        self = this;
-        this.scope = $scope;
-        this.requestService = requestService;
-        this.dataService = dataService;
-
-        self.scope.copyIssue = function () {
-            return angular.copy(self.scope.issueList)
-        };
-
-        self.scope.sendIssueData = function () {
-
-            requestService.postData('./issues', self.scope.issueList);
-        };
-
-        self.scope.sendCommentData = function () {
-
-            requestService.postData('./comments', self.scope.comments);
-        };
-
-        self.scope.remain = function () {
-            let count = 0;
-
-            angular.forEach(self.scope.issueList, function (issue) {
-
-                if (issue.status.id !== 3) {
-                    count += 1
-                }
-
-            });
-            return count
-        };
-
-        self.scope.getId = function () {
-            var max = 0;
-
-            angular.forEach(self.scope.issueList, function (issue) {
-
-                if (max <= issue.id) {
-                    max = issue.id
-                }
-            });
-            return max + 1;
-        };
-
-        self.scope.getCommentId = function () {
-            var max = 0;
-
-            angular.forEach(self.scope.comments, function (comment) {
-
-                if (max <= comment.id) {
-                    max = comment.id
-                }
-            });
-            return max + 1;
-        };
-
-        self.scope.setClass = function (status) {
-
-            switch (status.id) {
-                case 1:
-                    switch (self.scope.scheme) {
-                        case "first":
-                            return "danger";
-                        case "second":
-                            return "info";
-                        default:
-                            return "success"
-                    }
-                case 2:
-                    switch (self.scope.scheme) {
-                        case "first":
-                            return "info";
-                        case "second":
-                            return "success";
-                        default:
-                            return "danger"
-                    }
-                case 3:
-                    switch (self.scope.scheme) {
-                        case "first":
-                            return "success";
-                        case "second":
-                            return "danger";
-                        default:
-                            return "info"
-                    }
-                default:
-                    return ""
-            }
-        };
-
-        self.scope.addComment = function (issue_id) {
-
-            let modalInstance = commentAddService.getModal(self.scope.getCommentId(), issue_id)
-            modalInstance.result.then(function (comments) {
-
-                if (comments !== null) {
-                    self.scope.comments.push(comments);
-                    self.scope.sendCommentData()
-                }
-            })
-        };
-
-        self.scope.deleteComment = function (id) {
-
-            angular.forEach(self.scope.comments, function (value, index) {
-                if (value.id == id) {
-
-                    dialogService.getModal('d').result.then(function (result) {
-                        if (result !== null) {
-                            self.scope.comments.splice(index, 1);
-                            self.scope.sendCommentData()
-                        }
-                    })
-                }
-            })
-        };
-
-        self.scope.addIssue = function () {
-            let modalInstance = issueAddService.create(this.getId(), self.scope.priorities, self.scope.statuses);
-
-            modalInstance.result.then(function (issueList) {
-
-                if (issueList !== null) {
-                    self.scope.issueList.push(issueList);
-                    self.scope.initIssue = self.scope.copyIssue();
-                    self.scope.sendIssueData();
-                }
-            })
-        };
-
-        self.scope.editIssue = function (issue, index) {
-            let modalInstance = issueEditService.create(issue, self.scope.priorities, self.scope.statuses, index);
-
-            modalInstance.result.then(function (issueList) {
-
-                if (issueList !== null) {
-                    _.extend(issue, issueList);
-                    self.scope.initIssue = this.copyIssue();
-                    self.scope.sendIssueData()
-                } else {
-                    let modalInstance = dialogService.create('d');
-
-                    modalInstance.result.then(function (result) {
-
-                        if (result !== null) {
-                            self.scope.issueList.splice(index, 1);
-                            self.scope.sendIssueData();
-                        }
-                    })
-                }
-                self.scope.sendIssueData()
-            })
-        };
-
-        self.scope.deleteIssue = function (index) {
-
-            dialogService.getModal('d').result.then(function (result) {
-                if (result !== null) {
-                    self.scope.issueList.splice(index, 1);
-                    self.scope.sendIssueData()
-                }
-            })
-        };
-
-        self.scope.closeAlert = function (index) {
-            this.alerts.splice(index, 1)
-        };
-
-        self.scope.dialog = function (issue, index) {
-
-            self.scope.updIssueList[index] = self.scope.issueList[index];
-            self.scope.issueList[index] = self.scope.initIssue[index];
-
-            dialogService.getModal('c').result.then(function (result) {
-
-                if (result !== null) {
-                    self.scope.issueList[index] = self.scope.updIssueList[index];
-                    self.scope.sendIssueData();
-                }
-                else if (result == null) {
-                    self.scope.issueList = self.scope.copyIssue()
-                }
-
-            });
-        };
-
-        self.scope.help = function () {
-            helpService.getModal(self.scope.poll, self.scope.count, self.scope.log).result.then(function (count) {
-                if (count !== null) {
-                    self.scope.count = count;
-                    self.scope.sendPoll();
-                }
-            })
-        };
-
-        self.scope.settings = function () {
-            settingsService.getModal(self.scope.colorScheme, self.scope.statuses, self.scope.scheme).result.then(function (scheme) {
-                if (scheme !== null) {
-                    self.scope.scheme = scheme;
-            }
-            });
-        };
-
-        this.initData();
+        this.initData({...arguments});
     }
 
-    initData() {
-        let self = this;
+    initData(args) {
+        this.modalService = args[0];
+        this.requestService = args[1];
+        this.dataService = args[2];
 
-        self.scope.sortType     = 'id';
-        self.scope.sortReverse  = false;
-        self.scope.searchQuery = '';
-        self.scope.log = true;
-        self.scope.updIssueList = {};
-        self.scope.scheme = 'first';
+        this.log = true;
+        this.updIssueList = {};
 
-        this.requestService.getData('./json/issues.json').then(function (result) {
-            self.scope.issueList = result;
-            self.scope.initIssue = self.scope.copyIssue();
-            //self.scope.$apply();
+        this.requestService.getIssueData().then((result) => {
+            this.issueList = result;
+            this.initIssue = this.copyIssue();
+            //this.$apply();
+            this.remainIssues = this.getRemainingIssues();
+
         });
-        this.requestService.getData('./json/comments.json').then(function (result) {
-            self.scope.comments = result;
+        this.requestService.getCommentData().then((result) => {
+            this.comments = result;
         });
-        this.requestService.getData('./json/poll.json').then(function (result) {
-            self.scope.poll = result;
+        this.requestService.getPollData().then((result) => {
+            this.poll = result;
+            this.scheme = this.poll.scheme;
         });
 
-        self.scope.statuses = this.dataService.getStatus();
-        self.scope.priorities = this.dataService.getPriority();
-        self.scope.colorScheme = this.dataService.getScheme();
-
+        this.statuses = this.dataService.getStatus();
+        this.priorities = this.dataService.getPriority();
+        this.colorScheme = this.dataService.getScheme();
     }
+
+    getSettings() {
+        let schemeObj = {
+            colorScheme: this.colorScheme,
+            scheme: this.scheme
+        };
+        this.modalService.getSettingsModal(schemeObj).result.then((scheme) => {
+            if (scheme) {
+                this.scheme = scheme;
+                this.poll.scheme = scheme;
+                this.requestService.postPollData(this.poll);
+            }
+        });
+    };
+
+    getHelp() {
+        let pollObject = {
+            poll: this.poll,
+            count: this.count,
+            log: this.log
+        };
+        this.modalService.getHelpModal(pollObject).result.then();
+    };
+
+    getDialog(issue, index) {
+        this.updIssueList[index] = this.issueList[index];
+        this.issueList[index] = this.initIssue[index];
+        this.modalService.getDialogModal('c').result.then((result) => {
+            if (result) {
+                this.issueList[index] = this.updIssueList[index];
+                this.sendIssueData();
+            }
+            else if (!result) {
+                this.issueList = this.copyIssue()
+            }
+        });
+    };
+
+    copyIssue() {
+        return angular.copy(this.issueList)
+    };
+
+    getRemainingIssues() {
+        let count;
+        count = _.filter(this.issueList, (issue) => {return issue.status.id !== 3}).length;
+        return count;
+    };
+
+    getCommentsCount(id) {
+        let count;
+        count = _.filter(this.comments, (comment) => {return comment.issueId === id}).length;
+        return count;
+    };
+    
+    closeAlert(index) {
+        this.alerts.splice(index, 1)
+    };
+
+    setClass(status) {
+        switch (status.id) {
+            case 1:
+                switch (this.scheme) {
+                    case "first":
+                        return "danger";
+                    case "second":
+                        return "info";
+                    default:
+                        return "success";
+                }
+            case 2:
+                switch (this.scheme) {
+                    case "first":
+                        return "info";
+                    case "second":
+                        return "success";
+                    default:
+                        return "danger";
+                }
+            case 3:
+                switch (this.scheme) {
+                    case "first":
+                        return "success";
+                    case "second":
+                        return "danger";
+                    default:
+                        return "info";
+                }
+            default:
+                return "";
+        }
+    };
+
+    sendIssueData() {
+        this.requestService.postIssueData(this.issueList);
+        this.initIssue = this.copyIssue();
+        this.remainIssues = this.getRemainingIssues();
+    };
+
+    sendCommentData() {
+        this.requestService.postCommentData(this.comments);
+    };
+
+    getId() {
+        let max = 0;
+        angular.forEach(this.issueList, (issue) => {
+            if (issue.id > max) {
+                max = issue.id;
+            }
+        });
+        return max + 1;
+    };
+
+    getCommentId() {
+        let max = 0;
+        angular.forEach(this.comments, (comment) => {
+            if (comment.id > max) {
+                max = comment.id
+            }
+        });
+        return max + 1;
+    };
+
+    addComment(issueId) {
+        const nextCommentId = this.getCommentId();
+        const today = new Date();
+        let issueCopy = angular.copy(this.issueList);
+        let comment = {commentId: nextCommentId, id: issueId};
+
+        this.modalService.getCommentModal(comment).result.then((comments) => {
+            if (comments) {
+                this.comments.push(comments);
+                this.sendCommentData();
+
+                angular.forEach(this.issueList, (issue) => {
+                    if (issue.id === issueId) {
+                        issue.lastupdated = today.getFullYear() + '/' +
+                                      ("0" + (today.getMonth() + 1)).slice(-2) + '/' +
+                                      ("0" + (today.getDate())).slice(-2);
+                        _.extend(this.issueList, issue);
+                        this.initIssue = this.copyIssue();
+                        this.sendIssueData();
+                    }
+                });
+            }
+        });
+    };
+
+    deleteComment(id) {
+        angular.forEach(this.comments, (value, index) => {
+            if (value.id === id) {
+                this.modalService.getDialogModal('d').result.then((result) => {
+                    if (result) {
+                        this.comments.splice(index, 1);
+                        this.sendCommentData()
+                    }
+                })
+            }
+        })
+    };
+
+    addIssue() {
+        let nextId = this.getId();
+        let issue = {
+            id: nextId,
+            priority: this.priorities,
+            status: this.statuses
+        };
+        this.modalService.getAddIssueModal(issue).result.then((issueList) => {
+            if (issueList) {
+                this.issueList.push(issueList);
+                this.initIssue = this.copyIssue();
+                this.sendIssueData();
+            }
+        })
+    };
+
+    editIssue(issue, index) {
+        let issueObj = {
+            issue: angular.copy(issue),
+            priority: this.priorities,
+            status: this.statuses,
+            index: index
+        };
+        this.modalService.getEditIssueModal(issueObj).result.then((issueList) => {
+            if (issueList) {
+                _.extend(issue, issueList);
+                this.initIssue = this.copyIssue();
+                this.sendIssueData();
+            } else {
+                this.modalService.getDialogModal('d').result.then((result) => {
+                    if (result) {
+                        this.issueList.splice(index, 1);
+                        this.sendIssueData();
+                    }
+                })
+            }
+        })
+    };
+
+    deleteIssue(index) {
+        this.modalService.getDialogModal('d').result.then((result) => {
+            if (result) {
+                this.issueList.splice(index, 1);
+                this.sendIssueData();
+            }
+        })
+    };
+
+    changeSortOptions(type, isReversed) {
+        this.sortType = type;
+        this.sortReverse = isReversed;
+        console.log(this.sortType, this.sortReverse);
+    };
 }
 
-IssueTrackerCtrl.$inject = ['$scope', '$uibModal', '$http', 'settingsService', 'helpService', 'dialogService',
-    'issueEditService', 'issueAddService', 'commentAddService', 'requestService', 'dataService'];
+IssueTrackerCtrl.$inject = ['modalService', 'requestService', 'dataService'];
 export {IssueTrackerCtrl}

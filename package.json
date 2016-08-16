@@ -1,10 +1,12 @@
 {
-  "name": "Issue Tracker",
+  "name": "IssueTracker",
   "version": "0.0.0",
   "description": "",
   "main": "gulpfile.js",
   "dependencies": {
-    "gulp": "^3.9.0",
+    "body-parser": "^1.15.2",
+    "cookie-parser": "^1.4.3",
+    "gulp": "^3.9.1",
     "q": "^1.4.1"
   },
   "devDependencies": {
@@ -36,7 +38,8 @@
     "watchify": "^3.2.3"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "gulp",
+    "start": "node app.js"
   },
   "author": "Igor Pavliv",
   "license": "",

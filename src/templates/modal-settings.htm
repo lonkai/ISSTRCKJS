@@ -10,9 +10,6 @@
                     <input type="radio" ng-model="ModalCtrl.scheme" value="{{scheme.name}}">{{scheme.name}}
                 </div>
             </label>
-            <div ng-repeat="status in ModalCtrl.statuses">
-                {{status.name}}: bootstrap class=<label>{{ModalCtrl.setClass(status)}}</label>
-            </div>
         </div>
     </div>
 </div>

@@ -1,6 +1,6 @@
 <div class="modal-header bg-primary">
     <h3 class="modal-title" ng-show="ModalCtrl.add">Add Issue</h3>
-    <h3 class="modal-title" ng-show="ModalCtrl.edit">Edit Issue</h3>
+    <h3 class="modal-title" ng-show="!ModalCtrl.add">Edit Issue</h3>
 </div>
 <div class="modal-body">
     <form>
@@ -14,8 +14,13 @@
                     ng-options="status.name for status in ModalCtrl.stasuses track by status.name"></select>
         </div>
         <div class="form-group">
-            <label for="inputLogin">Summary</label>
-            <textarea class="form-control" rows="4" id="inputLogin" placeholder="Summary" ng-model="ModalCtrl.issueList.summary">
+            <label for="inputSummary">Summary</label>
+            <textarea class="form-control" rows="2" id="inputSummary" placeholder="Summary" ng-model="ModalCtrl.issueList.summary">
+            </textarea>
+        </div>
+        <div class="form-group">
+            <label for="inputDescription">Description</label>
+            <textarea class="form-control" rows="4" id="inputDescription" placeholder="Description" ng-model="ModalCtrl.issueList.description">
             </textarea>
         </div>
         <div class="form-group">
@@ -31,7 +36,7 @@
     </form>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-danger" ng-show="ModalCtrl.edit" ng-click="ModalCtrl.delete()">Delete</button>
+    <button class="btn btn-danger" ng-show="!ModalCtrl.add" ng-click="ModalCtrl.delete()">Delete</button>
     <button class="btn btn-primary" ng-click="ModalCtrl.ok()">Save</button>
     <button class="btn btn-default" ng-click="ModalCtrl.cancel()">Cancel</button>
 </div>

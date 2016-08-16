@@ -1,10 +1,7 @@
 class dataService {
 
     constructor() {
-
-        this.priorities = [];
-        this.stasuses = [];
-        this.colorScheme = [];
+        
         this.initData();
     }
 

@@ -1,74 +1,25 @@
 class SettingsCtrl {
 
-    constructor($scope, $uibModalInstance, $log, colorScheme, status, scheme) {
-        var vm = this;
-        vm.colorScheme = colorScheme;
-        vm.statuses = status;
-        vm.scheme = scheme;
+    constructor($uibModalInstance, schemeObj) {
 
-        vm.setClass = function (status) {
+        this.initLocalVars({...arguments});
+    };
 
-            switch (status.id) {
-                case 1:
-                    switch (vm.scheme) {
-                        case "first":
-                            return "danger";
-                            break;
-                        case "second":
-                            return "info";
-                            break;
-                        default:
-                            return "success";
-                            break;
-                    }
-                    break;
+    initLocalVars(args){
+        this.$uibModalInstance = args[0];
+        this.colorScheme = args[1].colorScheme;
+        this.scheme = args[1].scheme;
+    };
 
-                case 2:
-                    switch (vm.scheme) {
-                        case "first":
-                            return "info";
-                            break;
-                        case "second":
-                            return "success";
-                            break;
-                        default:
-                            return "danger";
-                            break;
-                    }
-                    break;
+    ok() {
+        this.$uibModalInstance.close(this.scheme);
 
-                case 3:
-                    switch (vm.scheme) {
-                        case "first":
-                            return "success";
-                            break;
-                        case "second":
-                            return "danger";
-                            break;
-                        default:
-                            return "info";
-                            break;
-                    }
-                    break;
+    };
 
-                default:
-                    return "";
-                    break;
-
-            }
-        };
-
-        vm.ok = function () {
-            $uibModalInstance.close(vm.scheme);
-
-        };
-
-        vm.cancel = function () {
-            $uibModalInstance.dismiss('cancel');
-        };
-
+    cancel() {
+        this.$uibModalInstance.dismiss('cancel');
     };
 }
 
-SettingsCtrl.$inject = ['$scope', '$uibModalInstance', '$log', 'colorScheme', 'status', 'scheme'];
+SettingsCtrl.$inject = ['$uibModalInstance', 'schemeObj'];
 export default SettingsCtrl;

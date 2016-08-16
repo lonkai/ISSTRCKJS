@@ -1,28 +1,33 @@
 class ModalEditCtrl {
 
-    constructor($scope, $uibModalInstance, $log, issue, priorities, stasuses) {
+    constructor($uibModalInstance, issueObj) {
 
-        var vm = this;
+        this.initLocalVars({...arguments});
+    };
 
-        vm.issueList = issue;
-        vm.priorities = priorities;
-        vm.stasuses = stasuses;
+    initLocalVars(args){
+        this.$uibModalInstance = args[0];
+        this.issueList = args[1].issue;
+        this.priorities = args[1].priority;
+        this.stasuses = args[1].status;
+    };
 
-        vm.ok = function () {
-            $uibModalInstance.close(vm.issueList);
-        };
+    ok() {
+        const today = new Date();
+        this.issueList.lastupdated =  today.getFullYear() + '/' +
+                       ("0" + (today.getMonth() + 1)).slice(-2) + '/' +
+                       ("0" + (today.getDate())).slice(-2);
+        this.$uibModalInstance.close(this.issueList);
+    };
 
-        vm.cancel = function () {
-            $uibModalInstance.dismiss('cancel');
-        };
+    cancel() {
+        this.$uibModalInstance.dismiss('cancel');
+    };
 
-        vm.delete = function () {
-            $uibModalInstance.close(null);
-        };
-
-        vm.edit = true;
+    delete() {
+        this.$uibModalInstance.close(null);
     };
 }
 
-ModalEditCtrl.$inject = ['$scope', '$uibModalInstance', '$log', 'issue', 'priorities', 'stasuses'];
+ModalEditCtrl.$inject = ['$uibModalInstance', 'issueObj'];
 export {ModalEditCtrl}

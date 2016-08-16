@@ -1,32 +1,42 @@
 class DialogCtrl {
-    constructor($scope, $uibModalInstance, $log, param)
-    {
-        var vm = this;
+    constructor($uibModalInstance, param) {
 
-        vm.param = param;
+        this.initLocalVars({...arguments});
+    };
 
-        if (vm.param == 'c') {
-            vm.change = true;
-            vm.delete = false;
+    initLocalVars(args){
+        this.$uibModalInstance = args[0];
+        this.param = args[1];
+
+        this.change = false;
+        this.delete = false;
+
+        switch (this.param) {
+            case 'c':
+            {
+                this.change = true;
+                break;
+            }
+            case 'd':
+            {
+                this.delete = true;
+                break;
+            }
+            default:
+                break;
         }
-        else if (vm.param == 'd') {
-            vm.delete = true;
-            vm.change = false;
-        }
 
-        vm.result = 'ok';
+        this.result = 'ok';
+    };
 
-        vm.ok = function () {
-            $uibModalInstance.close(vm.result);
-        };
+    ok() {
+        this.$uibModalInstance.close(this.result);
+    };
 
-        vm.cancel = function () {
-            $uibModalInstance.close(null);
-        };
-
-    }
-    ;
+    cancel() {
+        this.$uibModalInstance.close(null);
+    };
 }
 
-DialogCtrl.$inject = ['$scope', '$uibModalInstance', '$log', 'param'];
+DialogCtrl.$inject = ['$uibModalInstance', 'param'];
 export {DialogCtrl}

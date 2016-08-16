@@ -14,10 +14,10 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="" ng-click="addIssue()">Create Issue</a></li>
+                <li><a class="pointer" ng-click="IssueCtrl.addIssue()">Create Issue</a></li>
                 <li><a href="javascript:history.go(0)">Refresh</a></li>
-                <li><a href="" ng-click="settings()">Settings</a></li>
-                <li><a href="" ng-click="help()">Help</a></li>
+                <li><a class="pointer" ng-click="IssueCtrl.getSettings()">Settings</a></li>
+                <li><a class="pointer" ng-click="IssueCtrl.getHelp()">Help</a></li>
             </ul>
             <form class="navbar-form navbar-right">
                 <input type="text" class="form-control input-sm" placeholder="Search..." ng-model="searchQuery">

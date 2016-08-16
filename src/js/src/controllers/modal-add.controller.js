@@ -1,30 +1,38 @@
 class ModalAddCtrl {
 
-    constructor($scope, $uibModalInstance, $log, id, priorities, stasuses) {
-        var vm = this;
-        var today = new Date();
-        var month = today.getMonth() + 1;
+    constructor($uibModalInstance, issue) {
 
-        vm.issueList = {
-            id: '', status: {id: 1, name: 'new'}, summary: '', priority: {id: 1},
-            lastupdated: today.getDate() + '.' + month + '.' + today.getFullYear(), assignedto: '', opened: true
+        this.initLocalVars({...arguments});
+    };
+
+    initLocalVars(args) {
+        this.$uibModalInstance = args[0];
+        this.priorities = args[1].priority;
+        this.stasuses = args[1].status;
+        this.nextId = args[1].id;
+
+        const today = new Date();
+        this.issueList = {
+            id: this.nextId,
+            status: {id: 1, name: 'new'},
+            summary: '',
+            priority: {id: 1, name: 'low'},
+            lastupdated: today.getFullYear() + '/' +
+                 ("0" + (today.getMonth() + 1)).slice(-2) + '/' +
+                 ("0" + (today.getDate())).slice(-2),
+            assignedto: ''
         };
+        this.add = true;
+    }
 
-        vm.priorities = priorities;
-        vm.stasuses = stasuses;
-        vm.issueList.id = id;
+    ok() {
+        this.$uibModalInstance.close(this.issueList);
+    };
 
-        vm.ok = function () {
-            $uibModalInstance.close(vm.issueList);
-        };
-
-        vm.cancel = function () {
-            $uibModalInstance.dismiss('cancel');
-        };
-        vm.add = true;
-
+    cancel() {
+        this.$uibModalInstance.dismiss('cancel');
     };
 }
 
-ModalAddCtrl.$inject = ['$scope', '$uibModalInstance', '$log', 'id', 'priorities', 'stasuses'];
+ModalAddCtrl.$inject = ['$uibModalInstance', 'issue'];
 export {ModalAddCtrl}

@@ -27,6 +27,7 @@
     "angular-ui-router": "~0.2.15",
     "angular-ui-bootstrap": "~2.0.0",
     "angular-route": "~1.4.3",
-    "bootstrap": "~3.3.5"
+    "bootstrap": "~3.3.5",
+    "underscore": "^1.8.3"
   }
 }

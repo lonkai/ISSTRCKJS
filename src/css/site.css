@@ -1,4 +1,4 @@
-.thlink {
+.pointer {
     cursor: pointer;
 }
 
@@ -7,8 +7,13 @@
     text-shadow: 1px 0 #fff;
 }
 
-.mytable {
+.zero-mrgbrd {
+    margin: 0;
     border: 0;
+}
+
+.colorhelp {
+    color: darkslategrey;
 }
 
 .mywrapper {

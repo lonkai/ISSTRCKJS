@@ -1,18 +1,19 @@
 class HelpCtrl {
 
-    constructor(requestService, pollObj) {
+    constructor(requestService, poll) {
 
-        this.initLocalVars({...arguments});
+        this.initLocalVars(requestService, poll);
     };
 
-    initLocalVars(args){
-        this.requestService = args[0];
-        this.poll = args[1].poll;
-        this.count = args[1].count;
-        this.log = args[1].log;
+    initLocalVars(requestService, poll){
+
+        this.requestService = requestService;
+        this.poll = poll;
+        this.log = false;
     };
 
     showConfirmation() {
+
         if ($window.confirm("REALLY?!!!")) {
             $window.alert('No vote for ya bitch!');
         } else {
@@ -21,38 +22,15 @@ class HelpCtrl {
     };
 
     sendPoll() {
-        switch (this.count) {
-            case "first":
-            {
-                this.poll.first.value++;
-                this.poll.people++;
-                this.log = false;
-            }
-                break;
-            case "second":
-            {
-                this.poll.second.value++;
-                this.poll.people++;
-                this.log = false;
-            }
-                break;
-            case "third":
-            {
-                this.poll.third.value++;
-                this.poll.people++;
-                this.log = false;
-            }
-                break;
-            case "fourth":
-            {
-                this.showConfirmation();
-                this.log = false;
-            }
-                break;
-            default:
-                return "";
+
+        this.poll[this.count].value++;
+        this.poll.people++;
+
+        if (this.count === 'fourth') {
+            this.showConfirmation();
         }
 
+        this.log = true;
         this.requestService.postPollData(this.poll);
     };
 
@@ -62,5 +40,5 @@ class HelpCtrl {
     };
 }
 
-HelpCtrl.$inject = ['requestService', 'pollObj'];
+HelpCtrl.$inject = ['requestService', 'poll'];
 export {HelpCtrl}

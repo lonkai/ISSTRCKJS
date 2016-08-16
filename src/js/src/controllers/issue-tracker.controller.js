@@ -2,15 +2,14 @@ class IssueTrackerCtrl {
 
     constructor(modalService, requestService, dataService) {
 
-        this.initData({...arguments});
+        this.initData(modalService, requestService, dataService);
     }
 
-    initData(args) {
-        this.modalService = args[0];
-        this.requestService = args[1];
-        this.dataService = args[2];
+    initData(modalService, requestService, dataService) {
+        this.modalService = modalService;
+        this.requestService = requestService;
+        this.dataService = dataService;
 
-        this.log = true;
         this.updIssueList = {};
 
         this.requestService.getIssueData().then((result) => {
@@ -39,34 +38,29 @@ class IssueTrackerCtrl {
             scheme: this.scheme
         };
         this.modalService.getSettingsModal(schemeObj).result.then((scheme) => {
-            if (scheme) {
-                this.scheme = scheme;
-                this.poll.scheme = scheme;
-                this.requestService.postPollData(this.poll);
-            }
+            if (!scheme) return;
+
+            this.scheme = scheme;
+            this.poll.scheme = scheme;
+            this.requestService.postPollData(this.poll);
+
         });
     };
 
     getHelp() {
-        let pollObject = {
-            poll: this.poll,
-            count: this.count,
-            log: this.log
-        };
-        this.modalService.getHelpModal(pollObject).result.then();
+
+        this.modalService.getHelpModal(this.poll).result.then();
     };
 
     getDialog(issue, index) {
         this.updIssueList[index] = this.issueList[index];
         this.issueList[index] = this.initIssue[index];
         this.modalService.getDialogModal('c').result.then((result) => {
-            if (result) {
-                this.issueList[index] = this.updIssueList[index];
-                this.sendIssueData();
-            }
-            else if (!result) {
-                this.issueList = this.copyIssue()
-            }
+
+            if (!result) return this.issueList = this.copyIssue();
+
+            this.issueList[index] = this.updIssueList[index];
+            this.sendIssueData();
         });
     };
 
@@ -75,17 +69,17 @@ class IssueTrackerCtrl {
     };
 
     getRemainingIssues() {
-        let count;
-        count = _.filter(this.issueList, (issue) => {return issue.status.id !== 3}).length;
-        return count;
+        return _.filter(this.issueList, (issue) => {
+            return issue.status.id !== 3
+        }).length;
     };
 
     getCommentsCount(id) {
-        let count;
-        count = _.filter(this.comments, (comment) => {return comment.issueId === id}).length;
-        return count;
+        return _.filter(this.comments, (comment) => {
+            return comment.issueId === id
+        }).length;
     };
-    
+
     closeAlert(index) {
         this.alerts.splice(index, 1)
     };
@@ -135,6 +129,7 @@ class IssueTrackerCtrl {
     };
 
     getId() {
+
         let max = 0;
         angular.forEach(this.issueList, (issue) => {
             if (issue.id > max) {
@@ -145,6 +140,7 @@ class IssueTrackerCtrl {
     };
 
     getCommentId() {
+
         let max = 0;
         angular.forEach(this.comments, (comment) => {
             if (comment.id > max) {
@@ -155,41 +151,43 @@ class IssueTrackerCtrl {
     };
 
     addComment(issueId) {
+
         const nextCommentId = this.getCommentId();
         const today = new Date();
         let issueCopy = angular.copy(this.issueList);
         let comment = {commentId: nextCommentId, id: issueId};
 
         this.modalService.getCommentModal(comment).result.then((comments) => {
-            if (comments) {
-                this.comments.push(comments);
-                this.sendCommentData();
 
-                angular.forEach(this.issueList, (issue) => {
-                    if (issue.id === issueId) {
-                        issue.lastupdated = today.getFullYear() + '/' +
-                                      ("0" + (today.getMonth() + 1)).slice(-2) + '/' +
-                                      ("0" + (today.getDate())).slice(-2);
-                        _.extend(this.issueList, issue);
-                        this.initIssue = this.copyIssue();
-                        this.sendIssueData();
-                    }
-                });
-            }
+            if (!comments) return;
+
+            this.comments.push(comments);
+            this.sendCommentData();
+
+            angular.forEach(this.issueList, (issue) => {
+                if (issue.id === issueId) {
+                    issue.lastupdated = today.getFullYear() + '/' +
+                        ("0" + (today.getMonth() + 1)).slice(-2) + '/' +
+                        ("0" + (today.getDate())).slice(-2);
+                    _.extend(this.issueList, issue);
+                    this.initIssue = this.copyIssue();
+                    this.sendIssueData();
+                }
+            });
         });
     };
 
     deleteComment(id) {
-        angular.forEach(this.comments, (value, index) => {
-            if (value.id === id) {
-                this.modalService.getDialogModal('d').result.then((result) => {
-                    if (result) {
-                        this.comments.splice(index, 1);
-                        this.sendCommentData()
-                    }
-                })
-            }
-        })
+
+        const comment = _.findWhere(this.comments, {id: id});
+        if (!comment) return;
+
+        this.modalService.getDialogModal('d').result.then((result) => {
+            if (!result) return;
+
+            this.comments.splice(this.comments.indexOf(comment), 1);
+            this.sendCommentData();
+        });
     };
 
     addIssue() {
@@ -200,12 +198,14 @@ class IssueTrackerCtrl {
             status: this.statuses
         };
         this.modalService.getAddIssueModal(issue).result.then((issueList) => {
-            if (issueList) {
-                this.issueList.push(issueList);
-                this.initIssue = this.copyIssue();
-                this.sendIssueData();
-            }
-        })
+
+            if (!issueList) return;
+
+            this.issueList.push(issueList);
+            this.initIssue = this.copyIssue();
+            this.sendIssueData();
+
+        });
     };
 
     editIssue(issue, index) {
@@ -216,34 +216,34 @@ class IssueTrackerCtrl {
             index: index
         };
         this.modalService.getEditIssueModal(issueObj).result.then((issueList) => {
-            if (issueList) {
-                _.extend(issue, issueList);
-                this.initIssue = this.copyIssue();
-                this.sendIssueData();
-            } else {
+
+            if (!issueList) {
                 this.modalService.getDialogModal('d').result.then((result) => {
                     if (result) {
                         this.issueList.splice(index, 1);
                         this.sendIssueData();
                     }
-                })
+                });
             }
-        })
+            _.extend(issue, issueList);
+            this.initIssue = this.copyIssue();
+            this.sendIssueData();
+        });
     };
 
     deleteIssue(index) {
         this.modalService.getDialogModal('d').result.then((result) => {
-            if (result) {
-                this.issueList.splice(index, 1);
-                this.sendIssueData();
-            }
-        })
+            if (!result) return;
+
+            this.issueList.splice(index, 1);
+            this.sendIssueData();
+        });
     };
 
     changeSortOptions(type, isReversed) {
+
         this.sortType = type;
         this.sortReverse = isReversed;
-        console.log(this.sortType, this.sortReverse);
     };
 }
 

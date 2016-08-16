@@ -1,36 +1,31 @@
 class DialogCtrl {
+    
     constructor($uibModalInstance, param) {
 
-        this.initLocalVars({...arguments});
+        this.initLocalVars($uibModalInstance, param);
     };
 
-    initLocalVars(args){
-        this.$uibModalInstance = args[0];
-        this.param = args[1];
+    initLocalVars($uibModalInstance, param){
+        this.$uibModalInstance = $uibModalInstance;
+        this.param = param;
 
-        this.change = false;
-        this.delete = false;
-
+        const CHANGE = 'c';
+        const DELETE = 'd';
         switch (this.param) {
-            case 'c':
-            {
+            case CHANGE: {
                 this.change = true;
                 break;
             }
-            case 'd':
-            {
+            case DELETE: {
                 this.delete = true;
                 break;
             }
-            default:
-                break;
+            default: break;
         }
-
-        this.result = 'ok';
     };
 
     ok() {
-        this.$uibModalInstance.close(this.result);
+        this.$uibModalInstance.close('result');
     };
 
     cancel() {

@@ -2,14 +2,14 @@ class ModalEditCtrl {
 
     constructor($uibModalInstance, issueObj) {
 
-        this.initLocalVars({...arguments});
+        this.initLocalVars($uibModalInstance, issueObj);
     };
 
-    initLocalVars(args){
-        this.$uibModalInstance = args[0];
-        this.issueList = args[1].issue;
-        this.priorities = args[1].priority;
-        this.stasuses = args[1].status;
+    initLocalVars($uibModalInstance, issueObj){
+        this.$uibModalInstance = $uibModalInstance;
+        this.issueList = issueObj.issue;
+        this.priorities = issueObj.priority;
+        this.stasuses = issueObj.status;
     };
 
     ok() {

@@ -7,7 +7,7 @@
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
             <h5><strong>Rate my application</strong></h5>
-            <input type="radio" name="poll" ng-disabled="!ModalCtrl.log"
+            <input type="radio" name="poll" ng-disabled="ModalCtrl.log"
                    ng-value="ModalCtrl.poll.first.name"
                    ng-model="ModalCtrl.count">PERFECT!
             <div class="">
@@ -18,7 +18,7 @@
                                         <i>{{ModalCtrl.round(ModalCtrl.poll.first.value, ModalCtrl.poll.people)}}%</i></span>
                 </uib-progressbar>
             </div>
-            <input type="radio" name="poll" ng-disabled="!ModalCtrl.log"
+            <input type="radio" name="poll" ng-disabled="ModalCtrl.log"
                    ng-value="ModalCtrl.poll.second.name"
                    ng-model="ModalCtrl.count">Very Good!
             <div class="">
@@ -28,7 +28,7 @@
                         class="colorhelp"><i>{{ModalCtrl.round(ModalCtrl.poll.second.value, ModalCtrl.poll.people)}}%</i></span>
                 </uib-progressbar>
             </div>
-            <input type="radio" name="poll" ng-disabled="!ModalCtrl.log"
+            <input type="radio" name="poll" ng-disabled="ModalCtrl.log"
                    ng-value="ModalCtrl.poll.third.name"
                    ng-model="ModalCtrl.count">You're fucking amazing!
             <div class="">
@@ -39,7 +39,7 @@
                                         <i>{{ModalCtrl.round(ModalCtrl.poll.third.value, ModalCtrl.poll.people)}}%</i></span>
                 </uib-progressbar>
             </div>
-            <input type="radio" name="poll" ng-disabled="!ModalCtrl.log"
+            <input type="radio" name="poll" ng-disabled="ModalCtrl.log"
                    ng-value="ModalCtrl.poll.fourth.name"
                    ng-model="ModalCtrl.count">TRASH!!!
             <div class="">
@@ -50,11 +50,11 @@
                                         <i>{{ModalCtrl.poll.fourth.value * 100 / ModalCtrl.poll.people}}%</i></span>
                 </uib-progressbar>
             </div>
-            <button class="btn btn-primary btn-sm" ng-disabled="!ModalCtrl.log" type="submit"
+            <button class="btn btn-primary btn-sm" ng-disabled="ModalCtrl.log" type="submit"
                     ng-click="ModalCtrl.sendPoll()">Submit
             </button>
             <span>{{ModalCtrl.poll.people}}</span> people voted
-            <p ng-show="!ModalCtrl.log">Thanks for your vote!</p>
+            <p ng-show="ModalCtrl.log">Thanks for your vote!</p>
         </div>
     </div>
 </div>

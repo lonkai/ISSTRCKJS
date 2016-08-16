@@ -51,15 +51,15 @@ class modalService {
         });
     };
 
-    getHelpModal(pollObj) {
+    getHelpModal(poll) {
         return this.$uibModal.open({
             animation: true,
             templateUrl: 'templates/modal-help.htm',
             controller: 'HelpCtrl',
             controllerAs: 'ModalCtrl',
             resolve: {
-                pollObj: function () {
-                    return pollObj;
+                poll: function () {
+                    return poll;
                 }
             }
         });

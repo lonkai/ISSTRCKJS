@@ -2,13 +2,13 @@ class SettingsCtrl {
 
     constructor($uibModalInstance, schemeObj) {
 
-        this.initLocalVars({...arguments});
+        this.initLocalVars($uibModalInstance, schemeObj);
     };
 
-    initLocalVars(args){
-        this.$uibModalInstance = args[0];
-        this.colorScheme = args[1].colorScheme;
-        this.scheme = args[1].scheme;
+    initLocalVars($uibModalInstance, schemeObj){
+        this.$uibModalInstance = $uibModalInstance;
+        this.colorScheme = schemeObj.colorScheme;
+        this.scheme = schemeObj.scheme;
     };
 
     ok() {

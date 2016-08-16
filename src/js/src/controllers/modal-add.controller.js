@@ -2,14 +2,14 @@ class ModalAddCtrl {
 
     constructor($uibModalInstance, issue) {
 
-        this.initLocalVars({...arguments});
+        this.initLocalVars($uibModalInstance, issue);
     };
 
-    initLocalVars(args) {
-        this.$uibModalInstance = args[0];
-        this.priorities = args[1].priority;
-        this.stasuses = args[1].status;
-        this.nextId = args[1].id;
+    initLocalVars($uibModalInstance, issue) {
+        this.$uibModalInstance = $uibModalInstance;
+        this.priorities = issue.priority;
+        this.stasuses = issue.status;
+        this.nextId = issue.id;
 
         const today = new Date();
         this.issueList = {
